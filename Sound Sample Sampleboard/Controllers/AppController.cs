@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Sound_Sample_Sampleboard.Controllers
 {
-    public class SamplerController : Controller
+    public class AppController : Controller
     {
         public IActionResult Index()
         {

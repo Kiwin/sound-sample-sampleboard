@@ -50,7 +50,7 @@ namespace Sound_Sample_Sampleboard
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Sampler}/{action=Index}/{id?}");
+                    pattern: "{controller=App}/{action=Index}/{id?}");
             });
         }
     }
