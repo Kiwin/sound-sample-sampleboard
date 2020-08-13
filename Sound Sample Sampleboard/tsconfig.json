@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "ESNext",
+    "outDir": "wwwroot/js",
+    "lib": [ "DOM", "ESNext" ],
+    "strict": true,
+    "rootDir": "Scripts"
+  },
+  "include": [
+    "**/*"
+  ]
+}

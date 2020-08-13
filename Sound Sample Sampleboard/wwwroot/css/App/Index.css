@@ -1,0 +1,118 @@
+﻿
+#controls {
+    margin-top: 2em;
+}
+
+button.play {
+    background-color: mediumaquamarine;
+}
+
+button.pause {
+    background-color: mediumaquamarine;
+}
+
+button.reset {
+    background-color: orchid;
+}
+
+#bpm-div {
+    display: inline;
+    font-weight: bold;
+}
+
+    #bpm-div > input {
+        outline: none;
+        border: none;
+        width: 2em;
+        font-weight: bold;
+        text-align: center;
+    }
+
+        #bpm-div > input::-webkit-outer-spin-button,
+        #bpm-div > input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        #bpm-div > input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+#track-container {
+    margin-top: 2em;
+}
+
+.track {
+    display: flex;
+    height: 5em;
+    border: solid 5px lightgray;
+    border-top: none;
+    border-bottom: none;
+    background-color: #f3f3f3;
+}
+
+    .track > .cell {
+        height: auto;
+        width: 5em;
+        background-color: antiquewhite;
+        border: dashed 0.11em rgba(0, 0, 0, 0.10);
+    }
+
+#gallery-container {
+    margin-top: 2em;
+}
+
+.gallery-scroll-pane {
+    overflow: auto;
+    height: 30vh;
+}
+
+#gallery {
+    display: flex;
+    flex-wrap: wrap;
+    border: solid 5px lightgray;
+    border-top: none;
+    border-bottom: none;
+    background-color: #f3f3f3;
+}
+
+.gallery-item {
+    margin: 0.2em;
+    width: 5em;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: 0.35s;
+}
+
+    .gallery-item > p {
+        margin: 0.1em;
+    }
+
+    .gallery-item.sample {
+        order: 0;
+        border: dashed 0.2em rgba(0, 0, 0, 0.10);
+        border-radius: 1em;
+        transition: 0.35s;
+    }
+
+        .gallery-item.sample:hover {
+            color: mediumaquamarine;
+            border-color: mediumaquamarine;
+        }
+
+    .gallery-item.btn {
+        order: 1;
+    }
+
+        .gallery-item.btn:hover {
+            color: orchid;
+        }
+
+        .gallery-item.btn > svg {
+            width: 80%;
+            height: 80%;
+        }

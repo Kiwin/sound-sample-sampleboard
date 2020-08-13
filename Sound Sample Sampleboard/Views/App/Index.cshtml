@@ -3,150 +3,27 @@
     ViewData["Title"] = "Index";
 }
 
-<style>
-    #controls {
-        margin-top: 2em;
-    }
+<link href="~/css/App/Index.css" rel="stylesheet" />
 
-    button.play {
-        background-color: mediumaquamarine;
-    }
-
-    button.pause {
-        background-color: mediumaquamarine;
-    }
-
-    button.reset {
-        background-color: orchid;
-    }
-
-    #bpm-div {
-        display: inline;
-        font-weight: bold;
-    }
-
-        #bpm-div > input {
-            outline: none;
-            border: none;
-            width: 2em;
-            font-weight: bold;
-            text-align: center;
-        }
-
-            #bpm-div > input::-webkit-outer-spin-button,
-            #bpm-div > input::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
-
-            #bpm-div > input[type=number] {
-                -moz-appearance: textfield;
-            }
-
-    #track-container {
-        margin-top: 2em;
-    }
-
-    .track {
-        display: flex;
-        height: 10em;
-        border: solid 5px lightgray;
-        border-top: none;
-        border-bottom: none;
-        background-color: #f3f3f3;
-    }
-
-        .track > .cell {
-            height: auto;
-            width: 5em;
-            background-color: antiquewhite;
-            border: dashed 0.2em rgba(0, 0, 0, 0.10);
-            border-radius: 1em;
-        }
-
-    #gallery-container {
-        margin-top: 2em;
-    }
-
-    .gallery-scroll-pane {
-        overflow: auto;
-        height: 30vh;
-    }
-
-    #gallery {
-        display: flex;
-        flex-wrap: wrap;
-        border: solid 5px lightgray;
-        border-top: none;
-        border-bottom: none;
-        background-color: #f3f3f3;
-    }
-
-    .gallery-item {
-        margin: 0.2em;
-        width: 5em;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        transition: 0.35s;
-    }
-
-        .gallery-item > p {
-            margin: 0.1em;
-        }
-
-        .gallery-item.sample {
-            order: 0;
-            border: dashed 0.2em rgba(0, 0, 0, 0.10);
-            border-radius: 1em;
-            transition: 0.35s;
-        }
-
-            .gallery-item.sample:hover {
-                color: mediumaquamarine;
-                border-color: mediumaquamarine;
-            }
-
-        .gallery-item.btn {
-            order: 1;
-        }
-
-            .gallery-item.btn:hover {
-                color: orchid;
-            }
-
-            .gallery-item.btn > svg {
-                width: 80%;
-                height: 80%;
-            }
-</style>
-
-<h1>App!</h1>
+<h1> App! </h1>
 <div id="app">
     <div id="controls">
         <h2>Controls</h2>
-        <button class="btn font-weight-bold text-light play">Play</button>
-        <button class="btn font-weight-bold text-light reset">Reset</button>
+        <button id="play-pause-button" class="btn font-weight-bold text-light play"> Play </button>
+        <button id="reset-button" class="btn font-weight-bold text-light reset"> Reset </button>
         <div id="bpm-div" class="btn bg-info text-light">
-            <label for="bpm">BPM</label>
+            <label for="bpm"> BPM </label>
             <input type="number" id="bpm" name="bpm" min="1" max="360" value="83">
         </div>
     </div>
-    <div id="track-container">
-        <h2>Tracks</h2>
-        <div class="track">
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
+    <section id="track-section">
+            <h2> Tracks </h2>
+        <div id="track-container">
+
         </div>
-    </div>
+    </section>
     <div id="gallery-container">
-        <h2>Gallery</h2>
+        <h2> Gallery </h2>
         <div class="gallery-scroll-pane">
             <div id="gallery">
                 <div class="gallery-item btn" draggable="false">
@@ -162,65 +39,4 @@
     </div>
 </div>
 
-<script>
-
-    const bpmDiv = document.getElementById("bpm-div");
-    const bpmInput = document.getElementById("bpm");
-
-    const trackCells = document.querySelectorAll(".cell");
-    trackCells.forEach(cell => {
-        cell.ondragover = onCellDragOver;
-    });
-
-    function onCellDragOver(event) {
-        event.preventDefault();
-    }
-
-    const sampleGallery = document.getElementById("gallery");
-    const trackContainer = document.getElementById("track-container");
-
-    initializeApp();
-
-    //Method for constraining a value to a range.
-    //Returns the value if it is within the range constrains,
-    //Else return the nearest constrain.
-    function constrain(value, min, max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    //QOL: Focus bmpInput when the surrounding div is clicked.
-    bpmDiv.onclick = () => bpmInput.focus();
-
-    //Limit the bmpInput to it's specified range.
-    bpmInput.oninput = () => {
-        const min = parseInt(bpmInput.getAttribute("min"));
-        const max = parseInt(bpmInput.getAttribute("max"));
-        bpmInput.value = constrain(bpmInput.value, min, max);
-    }
-
-    function initializeApp() {
-        initializeSampleGallery();
-    }
-
-    function initializeSampleGallery() {
-        //Populate sample gallery.
-        for (let i = 0; i < 50; i++) {
-            sampleGallery.innerHTML += generateSampleElement()
-                .replace("<p>Sample Title</p>", `<p>Sample${i}</p>`);
-        }
-    }
-
-    function generateSampleElement() {
-        return `<div class="gallery-item sample draggable" draggable="true">
-                    <p>Sample Title</p>
-                    <svg viewBox="0 0 16 16" class="bi bi-music-note-beamed" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z" />
-                        <path fill-rule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z" />
-                        <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4V2.905z" />
-                    </svg>
-                </div>`
-    }
-
-</script>
+<script src="~/js/App/Index.js"></script>
