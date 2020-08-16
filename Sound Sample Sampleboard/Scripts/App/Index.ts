@@ -120,9 +120,8 @@ async function populateSoundSampleGallery(audioSampleGallery: HTMLDivElement) {
     const audioFilePaths = await response.json() as string[];
     audioFilePaths.forEach(filePath => {
 
-
-        const fileName = filePath.match(/([\w\-\_]+\.ogg)/)?.values[0] || "Sample Title";
-
+        const fileNamePattern = /([\w\-\_]+\.ogg)/
+        const fileName = (filePath.match(fileNamePattern) as string[])[1] || "Sound Title";
         //Create sound sample from file path.
         const audioSampleElement = Factory.createSoundSampleElement(fileName);
 
