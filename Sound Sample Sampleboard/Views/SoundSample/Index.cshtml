@@ -5,3 +5,14 @@
 
 <h1>Sound Sample Index</h1>
 
+<h3>Below are listed the currently available sounds.</h3>
+<ul id="sound_list">
+    @{
+        
+        string[] fileNames = System.IO.Directory.GetFiles(@"./wwwroot/sounds/", "*.ogg");
+        foreach (var fileName in fileNames)
+        {
+            <li>@fileName</li>
+        }
+    }
+</ul>

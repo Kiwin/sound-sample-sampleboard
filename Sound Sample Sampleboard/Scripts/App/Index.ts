@@ -46,9 +46,9 @@ abstract class HtmlGenerator {
 }
 
 abstract class Factory {
-    static createSoundSampleElement(): HTMLElement {
-        const html = `<div class="gallery-item sample draggable" draggable="true">
-                      <p>Sample Title</p>
+    static createSoundSampleElement(title: string): HTMLElement {
+        const html = `<div class="gallery-item sample draggable" draggable="true" data-audio-src="./sounds/clap.ogg">
+                      <p>${title}</p>
                       <svg viewBox="0 0 16 16" class="bi bi-music-note-beamed" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                           <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z" />
                           <path fill-rule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z" />
@@ -115,20 +115,40 @@ function populateSoundTrackContainer(soundTrackContainer: HTMLDivElement, soundT
     }
 }
 
-function populateSampleGallery(sampleGallery: HTMLDivElement) {
-    for (let i = 0; i < 50; i++) {
-        const SoundSampleElement = Factory.createSoundSampleElement();
-        SoundSampleElement.innerHTML.replace("<p>Sample Title</p>", `<p>Sample${i}</p>`);
-        sampleGallery.appendChild(SoundSampleElement);
-    }
+async function populateSoundSampleGallery(audioSampleGallery: HTMLDivElement) {
+    const response = await fetch("./SoundSample/AvailableSounds");
+    const audioFilePaths = await response.json() as string[];
+    audioFilePaths.forEach(filePath => {
+
+
+        const fileName = filePath.match(/([\w\-\_]+\.ogg)/)?.values[0] || "Sample Title";
+
+        //Create sound sample from file path.
+        const audioSampleElement = Factory.createSoundSampleElement(fileName);
+
+        //Set to play sound on right click.
+        const audioPlayer = new Audio(filePath)
+        audioSampleElement.addEventListener("contextmenu", event => {
+            event.preventDefault();
+            //Reset the sound player.
+            audioPlayer.currentTime = 0;
+            audioPlayer.play();
+        });
+
+        //Add sound sample to the gallery.
+        audioSampleGallery.appendChild(audioSampleElement);
+    })
 }
 
 function initializeApp() {
-    //Setup Sound Sample Gallery
+    //Setup Sound Sample Gallery.
     const SoundSampleGallery = document.getElementById("gallery") as HTMLDivElement;
-    populateSampleGallery(SoundSampleGallery);
+    populateSoundSampleGallery(SoundSampleGallery);
 
-    //Setup Beats per minute controls
+    const trackContainer = document.getElementById("track-container") as HTMLDivElement;
+    populateSoundTrackContainer(trackContainer);
+
+    //Setup Beats per minute controls.
     const bpmDiv = document.getElementById("bpm-div") as HTMLDivElement;
     const bpmInput = document.getElementById("bpm") as HTMLInputElement;
     configureBpmButton(bpmInput, bpmDiv);
@@ -136,8 +156,7 @@ function initializeApp() {
 
     //const playPauseButton = document.getElementById("play-pause-button") as HTMLButtonElement;
     //const resetButton = document.getElementById("reset-button") as HTMLButtonElement;
-    const trackContainer = document.getElementById("track-container") as HTMLDivElement;
-    populateSoundTrackContainer(trackContainer);
+
 }
 
 //Main program
