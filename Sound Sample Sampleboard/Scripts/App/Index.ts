@@ -47,7 +47,7 @@ abstract class HtmlGenerator {
 
 abstract class Factory {
     static createSoundSampleElement(title: string): HTMLElement {
-        const html = `<div class="gallery-item sample draggable" draggable="true" data-audio-src="./sounds/clap.ogg">
+        const html = `<div class="gallery-item sample draggable" draggable="true">
                       <p>${title}</p>
                       <svg viewBox="0 0 16 16" class="bi bi-music-note-beamed" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                           <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z" />
@@ -69,16 +69,6 @@ abstract class Factory {
         element.className += "cell";
         return element;
     }
-}
-
-function configureSampleTrackCells() {
-    const trackCells = document.querySelectorAll(".cell") as NodeListOf<HTMLElement>;
-    function onCellDragOver(event) {
-        event.preventDefault();
-    }
-    trackCells.forEach(cell => {
-        cell.addEventListener("ondragover", onCellDragOver);
-    });
 }
 
 function configureBpmButton(bpmInput: HTMLInputElement, bpmDiv: HTMLDivElement) {
@@ -103,12 +93,45 @@ function configureBpmButton(bpmInput: HTMLInputElement, bpmDiv: HTMLDivElement) 
         bpmInput.value = constrainedValue.toString();
     });
 }
+
+function soundTrackCellOnDragOver(event: DragEvent): void {
+    event.preventDefault();
+}
+
+function soundTrackCellOnDrop(event: DragEvent): void {
+    event.preventDefault();
+    const data = event.dataTransfer?.getData("text");
+    if (!data) return;
+    const cell = event.target as HTMLElement;
+    const fileNamePattern = /([\w\-\_]+\.ogg)/
+    const fileName = (data.match(fileNamePattern) as string[])[1] || "?";
+
+    cell.setAttribute("data-audio-src", data);
+    cell.innerHTML = fileName;
+}
+
+function soundSampleOnDragStart(event: DragEvent): void {
+    const sample = event.target as HTMLElement
+    const audioSource = sample.getAttribute("data-audio-src");
+    if (!audioSource) return;
+    event.dataTransfer?.setData("text", audioSource);
+}
+
+function configureSoundTrackCell(cell: HTMLElement): void {
+    //Allow Drop
+    cell.addEventListener("dragover", soundTrackCellOnDragOver);
+
+    cell.addEventListener("drop", soundTrackCellOnDrop);
+
+}
+
 function populateSoundTrackContainer(soundTrackContainer: HTMLDivElement, soundTrackCount = 3, soundTrackCellCount = 8): void {
     for (let i = 0; i < soundTrackCount; i++) {
         const SoundTrack = Factory.createSoundTrackElement();
 
         for (let j = 0; j < soundTrackCellCount; j++) {
             const soundTrackCell = Factory.createSoundTrackCellElement();
+            configureSoundTrackCell(soundTrackCell);
             SoundTrack.appendChild(soundTrackCell);
         }
         soundTrackContainer.appendChild(SoundTrack);
@@ -118,6 +141,8 @@ function populateSoundTrackContainer(soundTrackContainer: HTMLDivElement, soundT
 async function populateSoundSampleGallery(audioSampleGallery: HTMLDivElement) {
     const response = await fetch("./SoundSample/AvailableSounds");
     const audioFilePaths = await response.json() as string[];
+
+    // Create and configure audio sample for each file path.
     audioFilePaths.forEach(filePath => {
 
         const fileNamePattern = /([\w\-\_]+\.ogg)/
@@ -134,12 +159,16 @@ async function populateSoundSampleGallery(audioSampleGallery: HTMLDivElement) {
             audioPlayer.play();
         });
 
+        //Configure drag and drop functionality.
+        audioSampleElement.setAttribute("data-audio-src", filePath);
+        audioSampleElement.addEventListener("dragstart", soundSampleOnDragStart);
+
         //Add sound sample to the gallery.
         audioSampleGallery.appendChild(audioSampleElement);
     })
 }
 
-function initializeApp() {
+async function initializeApp() {
     //Setup Sound Sample Gallery.
     const SoundSampleGallery = document.getElementById("gallery") as HTMLDivElement;
     populateSoundSampleGallery(SoundSampleGallery);
@@ -151,7 +180,6 @@ function initializeApp() {
     const bpmDiv = document.getElementById("bpm-div") as HTMLDivElement;
     const bpmInput = document.getElementById("bpm") as HTMLInputElement;
     configureBpmButton(bpmInput, bpmDiv);
-    configureSampleTrackCells();
 
     //const playPauseButton = document.getElementById("play-pause-button") as HTMLButtonElement;
     //const resetButton = document.getElementById("reset-button") as HTMLButtonElement;
