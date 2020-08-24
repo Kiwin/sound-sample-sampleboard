@@ -146,7 +146,8 @@ class SampleTrack extends HTMLElement {
         super();
     }
 }
-class SampleBoard extends HTMLElement {
+class TrackContainer extends HTMLElement {
+    //tracks: SampleTrack[]
     constructor() {
         super();
     }
@@ -177,7 +178,7 @@ class SampleGallery extends HTMLElement {
 }
 class S3bFactory {
     static createSampleBoard() {
-        return new SampleBoard();
+        return new TrackContainer();
     }
     static createControlPanel() {
         return new ControlPanel();
